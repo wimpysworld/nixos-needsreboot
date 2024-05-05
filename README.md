@@ -34,7 +34,7 @@ nixos-needsreboot [/path/to/different-system]
   system.activationScripts = {
     nixos-needsreboot = {
       supportsDryActivation = true;
-      text = "${lib.getExe nixos-needsreboot.packages.${pkgs.system}.default} \"$systemConfig\"";
+      text = "${lib.getExe nixos-needsreboot.packages.${pkgs.system}.default} \"$systemConfig\" || true";
     };
   };
 ```
