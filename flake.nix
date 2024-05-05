@@ -35,7 +35,7 @@
           version = "0.2.1";
           src = ./.;
 
-          cargoHash = "sha256-LzO1kkrpWTjLnqs0HH5AIFLOZxtg0kUDIqXCVKSqsAc=";
+          cargoHash = "sha256-oX50yKQvJOLFnkBk0Souj0EKLtkVu32trkC9UnU/GGk=";
 
           meta = with nixpkgs.lib; {
             license = licenses.gpl2Only;
