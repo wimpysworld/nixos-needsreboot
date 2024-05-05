@@ -1,8 +1,6 @@
 {
   inputs = {
-    # a better way of using the latest stable version of nixpkgs
-    # without specifying specific release
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*.tar.gz";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs = { self, nixpkgs, ... }:
