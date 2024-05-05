@@ -23,12 +23,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         let new_system_id = fs::read_to_string(new_system_path.to_string() + "/nixos-version")?;
 
         if old_system_id == new_system_id {
-            eprintln!("DEBUG: you are using the latest NixOS generation, no need to reboot");
+            eprintln!("You are using the latest kernel and initrd, no need to reboot");
             std::process::exit(2);
         } else {
             let reason = compare_nixos_modules::upgrades_available(new_system_path)?;
             if reason.is_empty() {
-                eprintln!("DEBUG: no updates available, moar uptime!!!");
+                eprintln!("Reboot not required, moar uptime 😈");
                 std::process::exit(2);
             } else {
                 println!("{reason}");
