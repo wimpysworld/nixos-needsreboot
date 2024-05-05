@@ -40,7 +40,7 @@
           meta = with nixpkgs.lib; {
             license = licenses.gpl2Only;
             mainProgram = "nixos-needsreboot";
-          }
+          };
         };
       });
     };
