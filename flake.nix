@@ -36,6 +36,11 @@
           src = ./.;
 
           cargoHash = "sha256-LzO1kkrpWTjLnqs0HH5AIFLOZxtg0kUDIqXCVKSqsAc=";
+
+          meta = with nixpkgs.lib; {
+            license = licenses.gpl2Only;
+            mainProgram = "nixos-needsreboot";
+          }
         };
       });
     };
