@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             eprintln!("DEBUG: you are using the latest NixOS generation, no need to reboot");
             std::process::exit(2);
         } else {
-            let reason = compare_nixos_modules::upgrades_available()?;
+            let reason = compare_nixos_modules::upgrades_available(new_system_path)?;
             if reason.is_empty() {
                 eprintln!("DEBUG: no updates available, moar uptime!!!");
                 std::process::exit(2);

@@ -2,7 +2,7 @@ use std::{error::Error, fmt, fs};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-use crate::{NEW_SYSTEM_PATH, OLD_SYSTEM_PATH};
+use crate::{OLD_SYSTEM_PATH};
 
 #[derive(EnumIter)]
 enum ModuleType {
@@ -21,7 +21,7 @@ impl fmt::Display for ModuleType {
 }
 
 impl ModuleType {
-    fn get_nix_store_path(&self, use_old_path: bool) -> Result<String, Box<dyn Error>> {
+    fn get_nix_store_path(&self, system_path: &str) -> Result<String, Box<dyn Error>> {
         let suffix = match self {
             Self::LinuxKernel => "/kernel",
             Self::Systemd => "/systemd",
@@ -31,13 +31,7 @@ impl ModuleType {
             Self::LinuxKernel => true,
         };
 
-        let system_path = if use_old_path {
-            OLD_SYSTEM_PATH.to_string()
-        } else {
-            NEW_SYSTEM_PATH.to_string()
-        };
-
-        let tmp_module_path = fs::read_link(system_path + suffix)?
+        let tmp_module_path = fs::read_link(system_path.to_owned() + suffix)?
             .into_os_string()
             .into_string()
             .expect("Cannot convert PathBuf to String");
@@ -81,9 +75,9 @@ impl ModuleType {
         Ok(systemd_version)
     }
 
-    fn get_version(&self) -> Result<(String, String), Box<dyn Error>> {
-        let old_module_root_path = self.get_nix_store_path(true)?;
-        let new_module_root_path = self.get_nix_store_path(false)?;
+    fn get_version(&self, new_system_path: &str) -> Result<(String, String), Box<dyn Error>> {
+        let old_module_root_path = self.get_nix_store_path(OLD_SYSTEM_PATH)?;
+        let new_module_root_path = self.get_nix_store_path(new_system_path)?;
 
         let old_module_version: String;
         let new_module_version: String;
@@ -105,10 +99,10 @@ impl ModuleType {
     }
 }
 
-pub fn upgrades_available() -> Result<String, Box<dyn Error>> {
+pub fn upgrades_available(new_system_path: &str) -> Result<String, Box<dyn Error>> {
     let mut reason = String::new();
     'x: for module in ModuleType::iter() {
-        let (mut old_module_version, mut new_module_version) = module.get_version()?;
+        let (mut old_module_version, mut new_module_version) = module.get_version(new_system_path)?;
 
         if old_module_version != new_module_version {
             if old_module_version.len() != new_module_version.len() {
