@@ -32,10 +32,10 @@
       packages = forEachSupportedSystem ({ pkgs, ... }: {
         default = pkgs.rustPlatform.buildRustPackage {
           pname = "nixos-needsreboot";
-          version = "0.2.1";
+          version = "0.2.2";
           src = ./.;
 
-          cargoHash = "sha256-oX50yKQvJOLFnkBk0Souj0EKLtkVu32trkC9UnU/GGk=";
+          cargoHash = "sha256-tGal1sukWnxUeD62u+QTF1fYq3YXuYjm/kKmIPDHzwk=";
 
           meta = with nixpkgs.lib; {
             license = licenses.gpl2Only;
