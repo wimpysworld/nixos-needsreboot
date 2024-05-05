@@ -16,3 +16,25 @@ Add nixos-needsreboot to your `flake.nix`:
   };
 }
 ```
+
+# Program Usage
+
+> Check if the currently active system needs a reboot
+```
+nixos-needsreboot
+```
+
+> Check a different system if it would require a reboot
+```
+nixos-needsreboot [/path/to/different-system]
+```
+
+# Test whether to reboot during NixOS system activation
+```nix
+  system.activationScripts = {
+    nixos-needsreboot = {
+      supportsDryActivation = true;
+      text = "${lib.getExe nixos-needsreboot.packages.${pkgs.system}.default} \"$systemConfig\"";
+    };
+  };
+```
