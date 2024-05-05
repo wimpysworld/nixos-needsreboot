@@ -1,6 +1,5 @@
 use std::env;
 use std::error::Error;
-use std::fs;
 use std::path::Path;
 
 mod compare_nixos_modules;
@@ -19,20 +18,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     let new_system_path = if env_args.len() == 2 { &env_args[1] } else { NEW_SYSTEM_PATH };
 
     if Path::new("/nix/var/nix/profiles/system").exists() {
-        let old_system_id = fs::read_to_string(OLD_SYSTEM_PATH.to_string() + "/nixos-version")?;
-        let new_system_id = fs::read_to_string(new_system_path.to_string() + "/nixos-version")?;
-
-        if old_system_id == new_system_id {
-            eprintln!("You are using the latest kernel and initrd, no need to reboot");
+        let reason = compare_nixos_modules::upgrades_available(new_system_path)?;
+        if reason.is_empty() {
+            eprintln!("Reboot not required, moar uptime 😈");
             std::process::exit(2);
         } else {
-            let reason = compare_nixos_modules::upgrades_available(new_system_path)?;
-            if reason.is_empty() {
-                eprintln!("Reboot not required, moar uptime 😈");
-                std::process::exit(2);
-            } else {
-                println!("{reason}");
-            }
+            println!("{reason}");
         }
     } else {
         eprintln!("This binary is intended to run only on NixOS.");
