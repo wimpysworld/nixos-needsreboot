@@ -9,7 +9,7 @@ Add nixos-needsreboot to your `flake.nix`:
 
 ```nix
 {
-  inputs.nixos-needsreboot.url = "git+https://codeberg.org/Mynacol/nixos-needsreboot";
+  inputs.nixos-needsreboot.url = "https://codeberg.org/Mynacol/nixos-needsreboot/archive/main.tar.gz";
 
   outputs = { self, nixos-needsreboot }: {
     # Use in your outputs
