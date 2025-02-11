@@ -124,7 +124,7 @@ pub fn upgrades_available(new_system_path: &str) -> Result<String, Box<dyn Error
 
             for (old, new) in old_version.iter().zip(new_version.iter()) {
                 if new > old {
-                    reason = format!("\n{module} ({old_module_version} -> {new_module_version})");
+                    reason = format!("\n  \x1b[33m⏵\x1b[0m {module} ({old_module_version} -> {new_module_version})");
                     break 'x;
                 }
             }

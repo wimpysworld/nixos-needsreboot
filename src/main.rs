@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             eprintln!("\x1b[32m󰔚\x1b[0m No reboot required, more uptime!");
             std::process::exit(2);
         } else {
-            println!("\x1b[31m\x1b[0m Reboot required, uptime is ruined by {reason}");
+            println!("\x1b[31m\x1b[0m Reboot required, uptime is ruined:{reason}");
         }
     } else {
         eprintln!("\x1b[34m󱄅\x1b[0m This binary is intended to run only on NixOS.");
