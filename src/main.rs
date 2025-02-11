@@ -20,10 +20,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     if Path::new("/nix/var/nix/profiles/system").exists() {
         let reason = compare_nixos_modules::upgrades_available(new_system_path)?;
         if reason.is_empty() {
-            eprintln!("Reboot not required, more uptime 📈");
+            eprintln!("󰔚 No reboot required, more uptime!");
             std::process::exit(2);
         } else {
-            println!("Time to reboot, uptime is ruined 📉{reason}");
+            println!(" Reboot required, uptime is ruined by {reason}");
         }
     } else {
         eprintln!("This binary is intended to run only on NixOS.");
