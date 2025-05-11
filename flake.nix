@@ -33,7 +33,7 @@
           pname = "nixos-needsreboot";
           version = "0.2.7";
           src = ./.;
-          cargoHash = "sha256-QG2eAEP1eX6UL1U/XsNo/yvYLJHaq+wsT5AR9lh+BtQ=";
+          cargoHash = "sha256-veQ2pRTXH4UM+oMQoh0oiZFvisyq8e8n+1oWTaXVwOI=";
           #cargoHash = nixpkgs.lib.fakeHash;
 
           meta = with nixpkgs.lib; {
