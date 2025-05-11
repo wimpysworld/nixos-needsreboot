@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*.tar.gz";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
   outputs = { self, nixpkgs, ... }:
@@ -31,7 +31,7 @@
       packages = forEachSupportedSystem ({ pkgs, ... }: {
         default = pkgs.rustPlatform.buildRustPackage {
           pname = "nixos-needsreboot";
-          version = "0.2.5";
+          version = "0.2.7";
           src = ./.;
           cargoHash = "sha256-QG2eAEP1eX6UL1U/XsNo/yvYLJHaq+wsT5AR9lh+BtQ=";
           #cargoHash = nixpkgs.lib.fakeHash;
