@@ -41,7 +41,7 @@
           packages = with pkgs; [
             cargo-watch
             cargo-edit
-            clippy 
+            clippy
             nixpkgs-fmt
             rustToolchain
             rust-analyzer
