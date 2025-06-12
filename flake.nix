@@ -1,40 +1,68 @@
 {
+  description = "nixos-needsreboot";
   inputs = {
+    flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*.tar.gz";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, ... }:
+  # Flake outputs that other flakes can use
+  outputs = { self, flake-schemas, nixpkgs, rust-overlay }:
     let
-      # helpers for producing system-specific outputs
-      supportedSystems = [
-        "aarch64-linux"
-        "riscv64-linux"
-        "x86_64-linux"
+      meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
+      lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
+      version = "${builtins.substring 0 8 lastModifiedDate}-${self.shortRev or "dirty"}";
+
+      # Nixpkgs overlays
+      overlays = [
+        rust-overlay.overlays.default
+        (final: prev: {
+          rustToolchain = final.rust-bin.stable.latest.default;
+        })
       ];
+
+      # Helpers for producing system-specific outputs
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" "riscv64-linux" ];
       forEachSupportedSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs { inherit overlays system; };
       });
     in
     {
-      devShells = forEachSupportedSystem ({ pkgs, ... }: {
+      # Schemas tell Nix about the structure of the flake outputs
+      schemas = flake-schemas.schemas;
+
+      # Development environment
+      devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
+          # Packages available in the environment
           packages = with pkgs; [
-            rustup
-            gdb
-            pkg-config
-            # formatting this flake
+            cargo-watch
+            cargo-edit
+            clippy 
             nixpkgs-fmt
+            rustToolchain
+            rust-analyzer
+            rustfmt
           ];
+
+          # Environment variables that help with development
+          shellHook = ''
+            echo "🦀 Rust development environment loaded"
+            echo "📝 rust-analyzer tools available"
+            export RUST_BACKTRACE=1
+          '';
         };
       });
 
-      packages = forEachSupportedSystem ({ pkgs, ... }: {
+      # Package outputs from the flake
+      packages = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.rustPlatform.buildRustPackage {
-          pname = "nixos-needsreboot";
-          version = "0.2.9";
+          name = "${meta.name}-${version}";
           src = builtins.path { path = ./.; name = "source"; };
-          cargoHash = "sha256-veQ2pRTXH4UM+oMQoh0oiZFvisyq8e8n+1oWTaXVwOI=";
-
+          cargoLock.lockFile = ./Cargo.lock;
           meta = with nixpkgs.lib; {
             license = licenses.gpl2Only;
             mainProgram = "nixos-needsreboot";
