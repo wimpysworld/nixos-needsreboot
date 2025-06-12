@@ -27,7 +27,3 @@ jobs:
       - uses: DeterminateSystems/update-flake-lock@v25
         with:
           pr-title: "chore: update flake.lock"
-          # Labels to be set on the PR
-          pr-labels: |
-            dependencies
-            automated
