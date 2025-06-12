@@ -32,7 +32,7 @@
         default = pkgs.rustPlatform.buildRustPackage {
           pname = "nixos-needsreboot";
           version = "0.2.8";
-          src = ./.;
+          src = builtins.path { path = ./.; name = "source"; };
           cargoHash = "sha256-veQ2pRTXH4UM+oMQoh0oiZFvisyq8e8n+1oWTaXVwOI=";
 
           meta = with nixpkgs.lib; {
