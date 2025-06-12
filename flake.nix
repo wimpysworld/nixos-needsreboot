@@ -14,7 +14,7 @@
     let
       meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
       lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
-      version = "${builtins.substring 0 8 lastModifiedDate}-${self.shortRev or "dirty"}";
+      version = "${builtins.substring 0 10 lastModifiedDate}-${self.shortRev or "dirty"}";
 
       # Nixpkgs overlays
       overlays = [
