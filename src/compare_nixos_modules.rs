@@ -123,7 +123,7 @@ pub fn upgrades_available(new_system_path: &str) -> Result<String, Box<dyn Error
             let new_version = &new_module_version.split('.').collect::<Vec<&str>>();
 
             for (old, new) in old_version.iter().zip(new_version.iter()) {
-                if new > old {
+                if new != old {
                     reason = format!("\n  \x1b[33m⏵\x1b[0m {module} ({old_module_version} -> {new_module_version})");
                     break 'x;
                 }
