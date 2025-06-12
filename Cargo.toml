@@ -10,5 +10,5 @@ keywords = [ "nixos" ]
 categories = [ "command-line-utilities" ]
 
 [dependencies]
-strum = "0.26"
+strum = "0.27"
 strum_macros = "0.27"
