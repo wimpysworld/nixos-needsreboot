@@ -1,8 +1,11 @@
 {
   description = "nixos-needsreboot";
   inputs = {
-    flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*.tar.gz";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-schemas = {
+      url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -10,11 +13,13 @@
   };
 
   # Flake outputs that other flakes can use
-  outputs = { self, flake-schemas, nixpkgs, rust-overlay }:
+  outputs = { self, nixpkgs, flake-schemas, rust-overlay, ... }:
     let
-      meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
+      cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+      cargoPackageVersion = cargoToml.package.version;
       lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
-      version = "${builtins.substring 0 10 lastModifiedDate}-${self.shortRev or "dirty"}";
+      commitHash = self.shortRev or self.dirtyShortRev or "unknown";
+      version = "${cargoPackageVersion}-${commitHash}";
 
       # Nixpkgs overlays
       overlays = [
@@ -52,7 +57,8 @@
           shellHook = ''
             echo "🦀 Rust development environment loaded"
             echo "📝 rust-analyzer tools available"
-            export RUST_BACKTRACE=1
+            export CARGO_BUILD_INCREMENTAL=false
+            export RUST_BACKTRACE=full
           '';
         };
       });
@@ -60,11 +66,19 @@
       # Package outputs from the flake
       packages = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.rustPlatform.buildRustPackage {
-          name = "${meta.name}-${version}";
+          pname = cargoToml.package.name;
+          inherit version;
           src = builtins.path { path = ./.; name = "source"; };
           cargoLock.lockFile = ./Cargo.lock;
           meta = with nixpkgs.lib; {
+            description = cargoToml.package.description;
+            homepage = cargoToml.package.repository;
             license = licenses.gpl2Only;
+            maintainers = [
+              {
+                github = "flexiondotorg";
+              }
+            ];
             mainProgram = "nixos-needsreboot";
           };
         };
