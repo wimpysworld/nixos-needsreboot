@@ -43,10 +43,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1749695868,
+        "lastModified": 1749868581,
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "55f914d5228b5c8120e9e0f9698ed5b7214d09cd",
+        "rev": "2ff6d56a67d75559f7b5d9edf9aa1fcf8e15f461",
         "type": "github"
       },
       "original": {
