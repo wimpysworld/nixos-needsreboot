@@ -52,9 +52,20 @@ impl ModuleType {
     }
 
     fn get_linux_version(linux_path: &str) -> Result<String, Box<dyn Error>> {
-        let lib_modules_path = fs::read_dir(linux_path)?
+        let module_root_path = format!("{linux_path}/lib/modules");
+
+        // If the modules directory does not exist, fall back to taking
+        // the /nix/store/KERNELDIR path component.
+        if !std::path::Path::new(&module_root_path).is_dir() {
+            let linux_version = linux_path.split('/').nth(2).ok_or(
+                "Could not determine Linux kernel version from path: ".to_string() + linux_path,
+            )?;
+            return Ok(linux_version.to_string());
+        }
+
+        let lib_modules_path = fs::read_dir(&module_root_path)?
             .nth(0)
-            .ok_or("Expected one directory in ".to_string() + linux_path)??
+            .ok_or("Expected one directory in ".to_string() + &module_root_path)??
             .path()
             .into_os_string()
             .into_string()
@@ -84,10 +95,8 @@ impl ModuleType {
 
         match self {
             Self::LinuxKernel => {
-                let old_linux_path = old_module_root_path + "/lib/modules";
-                let new_linux_path = new_module_root_path + "/lib/modules";
-                old_module_version = Self::get_linux_version(&old_linux_path)?;
-                new_module_version = Self::get_linux_version(&new_linux_path)?;
+                old_module_version = Self::get_linux_version(&old_module_root_path)?;
+                new_module_version = Self::get_linux_version(&new_module_root_path)?;
             }
             Self::Systemd => {
                 old_module_version = Self::get_systemd_version(&old_module_root_path)?;
